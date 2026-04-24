@@ -17,6 +17,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import yams.gearing.GearBox;
@@ -38,17 +39,17 @@ public class FlywheelSubsystem extends SubsystemBase {
 private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-  .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+  .withClosedLoopController(SmartDashboard.getNumber("kP", 50), SmartDashboard.getNumber("kI", 0), SmartDashboard.getNumber("kD", 0), DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+  .withSimClosedLoopController(SmartDashboard.getNumber("Sim kP", 50), SmartDashboard.getNumber("Sim kI", 0), SmartDashboard.getNumber("Sim kD", 0), DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
   // Feedforward Constants
-  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+  .withFeedforward(new SimpleMotorFeedforward(SmartDashboard.getNumber("kS", 0), SmartDashboard.getNumber("kV", 0), SmartDashboard.getNumber("kA", 0)))
+  .withSimFeedforward(new SimpleMotorFeedforward(SmartDashboard.getNumber("Sim kS", 0), SmartDashboard.getNumber("Sim kV", 0), SmartDashboard.getNumber("Sim kA", 0)))
   // Telemetry name and verbosity level
   .withTelemetry("Flywheel Motor", TelemetryVerbosity.HIGH)
   // Gearing from the motor rotor to final shaft.
   // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
   // You could also use .withGearing(12) which does the same thing.
-  .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+  .withGearing(new MechanismGearing(GearBox.fromReductionStages(SmartDashboard.getNumber("Gear Ratio", 1))))
   // Motor properties to prevent over currenting.
   .withMotorInverted(false)
   .withIdleMode(MotorMode.COAST)
@@ -62,11 +63,11 @@ private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(th
 
 private final FlyWheelConfig shooterConfig = new FlyWheelConfig(sparkSmartMotorController)
   // Diameter of the flywheel.
-  .withDiameter(Inches.of(4))
+  .withDiameter(Inches.of(SmartDashboard.getNumber("Flywheel Diameter (in)", 4)))
   // Mass of the flywheel.
-  .withMass(Pounds.of(1))
+  .withMass(Pounds.of(SmartDashboard.getNumber("Flywheel Mass", 1)))
   // Maximum speed of the shooter.
-  .withUpperSoftLimit(RPM.of(1000))
+  .withUpperSoftLimit(RPM.of(SmartDashboard.getNumber("Upper Soft Limit", 1000)))
   // Telemetry name and verbosity for the arm.
   .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
 
