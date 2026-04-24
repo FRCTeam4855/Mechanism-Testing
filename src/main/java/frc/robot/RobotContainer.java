@@ -4,28 +4,42 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.TestMotorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
-    private final TestMotorSubsystem m_testMotorSubsystem;
+    private final ElevatorSubsystem m_elevatorSubsystem;
 
     private final GenericHID m_controller =
       new GenericHID(OperatorConstants.kOperatorControllerPort);
 
   public RobotContainer() {
-    m_testMotorSubsystem = new TestMotorSubsystem();
+    m_elevatorSubsystem = new ElevatorSubsystem();
+    // Set the default command to force the elevator to go to 0.
+    m_elevatorSubsystem.setDefaultCommand(m_elevatorSubsystem.setHeight(Meters.of(0)));
     configureBindings();
   }
 
   private void configureBindings() {
-    new JoystickButton(m_controller, 1).onTrue(new RunCommand(() -> m_testMotorSubsystem.testMotorMove()));
-    new JoystickButton(m_controller, 2).onTrue(new RunCommand(() -> m_testMotorSubsystem.testMotorStop()));
+    //preset heights
+	  new JoystickButton(m_controller, 1).onTrue(m_elevatorSubsystem.setHeight(Meters.of(0)).repeatedly());
+    new JoystickButton(m_controller, 2).onTrue(m_elevatorSubsystem.setHeight(Meters.of(1)).repeatedly());
+
+    //custom height set from SmartDashboard
+    new JoystickButton(m_controller, 5).onTrue(m_elevatorSubsystem.setHeight(Meters.of(SmartDashboard.getNumber("Custom Elevator Height (m)", 0))).repeatedly());
+
+
+    //adjust heights
+    new JoystickButton(m_controller, 3).whileTrue(new RunCommand(() -> m_elevatorSubsystem.set(0.3)));
+    new JoystickButton(m_controller, 4).whileTrue(new RunCommand(() -> m_elevatorSubsystem.set(-0.3)));
   }
 
   public Command getAutonomousCommand() {
