@@ -40,8 +40,8 @@ public class RobotContainer {
     new JoystickButton(m_controller, 10).onTrue(new RunCommand(()-> m_flywheelSubsystem.setVelocity(RPM.of(SmartDashboard.getNumber("Flywheel Setpoint (RPM)", 0)))));
 
     //buttons for adjusting flywheel speed (upping and lowering but 0.3 or -0.3)
-    new JoystickButton(m_controller,3).onTrue(new RunCommand(()-> m_flywheelSubsystem.set(0.3)));
-    new JoystickButton(m_controller, 4).onTrue(new RunCommand(()-> m_flywheelSubsystem.set(-0.3)));
+    new JoystickButton(m_controller,3).onTrue(m_flywheelSubsystem.set(0.3));
+    new JoystickButton(m_controller, 4).onTrue(m_flywheelSubsystem.set(-0.3));
   }
 
   public Command getAutonomousCommand() {
