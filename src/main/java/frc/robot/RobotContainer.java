@@ -43,8 +43,8 @@ public class RobotContainer {
     new JoystickButton(m_controller, 10).onTrue(new RunCommand(()-> m_elevatorSubsystem.setHeightAndStop(Meters.of(SmartDashboard.getNumber("Custom Elevator Height (m)", 0)), Meters.of(0.1))));
 
     //adjust heights
-    new JoystickButton(m_controller, 3).whileTrue(new RunCommand(() -> m_elevatorSubsystem.set(0.3)));
-    new JoystickButton(m_controller, 4).whileTrue(new RunCommand(() -> m_elevatorSubsystem.set(-0.3)));
+    new JoystickButton(m_controller, 3).whileTrue(m_elevatorSubsystem.set(0.3));
+    new JoystickButton(m_controller, 4).whileTrue(m_elevatorSubsystem.set(-0.3));
   }
 
   public Command getAutonomousCommand() {
