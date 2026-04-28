@@ -29,12 +29,20 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+    //Pre-Configured Setpoints
     new JoystickButton(m_controller, 1).onTrue(m_armSubsystem.setAngle(Degrees.of(90)));
     new JoystickButton(m_controller, 2).onTrue(m_armSubsystem.setAngle(Degrees.of(0)));
-    new JoystickButton(m_controller, 3).whileTrue(m_armSubsystem.setAngle(Degrees.of(SmartDashboard.getNumber("Arm Setpoint", 0))));
 
+    //Manual Setpoint from Smartdashboard
+    new JoystickButton(m_controller, 3).onTrue(m_armSubsystem.setAngle(Degrees.of(SmartDashboard.getNumber("Arm Setpoint", 0))));
+
+    //Manual Percent Output
     new JoystickButton(m_controller, 4).whileTrue(m_armSubsystem.set(0.3));
     new JoystickButton(m_controller, 5).whileTrue(m_armSubsystem.set(-0.3));
+
+    //Run a sysID routine while Button 6 is held, cancels on release
+    new JoystickButton(m_controller, 6).whileTrue(m_armSubsystem.sysId());
   }
 
   public Command getAutonomousCommand() {
