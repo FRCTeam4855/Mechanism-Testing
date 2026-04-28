@@ -45,6 +45,9 @@ public class RobotContainer {
     //adjust heights
     new JoystickButton(m_controller, 3).whileTrue(m_elevatorSubsystem.set(0.3));
     new JoystickButton(m_controller, 4).whileTrue(m_elevatorSubsystem.set(-0.3));
+
+    //sysID routine, stops when button is let go
+    new JoystickButton(m_controller, 11).whileTrue(m_elevatorSubsystem.sysId());
   }
 
   public Command getAutonomousCommand() {
