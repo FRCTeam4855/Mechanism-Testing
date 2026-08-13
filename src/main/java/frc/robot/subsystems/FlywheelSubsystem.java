@@ -39,10 +39,10 @@ public class FlywheelSubsystem extends SubsystemBase {
 private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(SmartDashboard.getNumber("kP", 50), SmartDashboard.getNumber("kI", 0), SmartDashboard.getNumber("kD", 0), DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+  .withClosedLoopController(0.2,0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
   .withSimClosedLoopController(SmartDashboard.getNumber("Sim kP", 50), SmartDashboard.getNumber("Sim kI", 0), SmartDashboard.getNumber("Sim kD", 0), DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
   // Feedforward Constants
-  .withFeedforward(new SimpleMotorFeedforward(SmartDashboard.getNumber("kS", 0), SmartDashboard.getNumber("kV", 0), SmartDashboard.getNumber("kA", 0)))
+  .withFeedforward(new SimpleMotorFeedforward(0.05, 0, 0))
   .withSimFeedforward(new SimpleMotorFeedforward(SmartDashboard.getNumber("Sim kS", 0), SmartDashboard.getNumber("Sim kV", 0), SmartDashboard.getNumber("Sim kA", 0)))
   // Telemetry name and verbosity level
   .withTelemetry("Flywheel Motor", TelemetryVerbosity.HIGH)
@@ -56,16 +56,16 @@ private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(th
   .withStatorCurrentLimit(Amps.of(40));
 
   // Vendor motor controller object
-  private SparkMax spark = new SparkMax(11, MotorType.kBrushless);
+  private SparkMax spark = new SparkMax(17, MotorType.kBrushless);
 
     // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
 private final FlyWheelConfig shooterConfig = new FlyWheelConfig(sparkSmartMotorController)
   // Diameter of the flywheel.
-  .withDiameter(Inches.of(SmartDashboard.getNumber("Flywheel Diameter (in)", 4)))
+  .withDiameter(Inches.of(4))
   // Mass of the flywheel.
-  .withMass(Pounds.of(SmartDashboard.getNumber("Flywheel Mass", 1)))
+  .withMass(Pounds.of(3))
   // Maximum speed of the shooter.
   .withUpperSoftLimit(RPM.of(SmartDashboard.getNumber("Upper Soft Limit", 1000)))
   // Telemetry name and verbosity for the arm.
@@ -103,6 +103,14 @@ private final FlyWheelConfig shooterConfig = new FlyWheelConfig(sparkSmartMotorC
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
   public Command set(double dutyCycle) {return shooter.set(dutyCycle);}
+
+	  /**
+   * Runs the shooter at the given velocity.
+   *
+   * @param speed Speed to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command run(AngularVelocity speed) {return shooter.run(speed);}
 
 
   /** Creates a new FlywheelSubsystem. */
