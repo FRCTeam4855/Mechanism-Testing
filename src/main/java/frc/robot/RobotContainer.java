@@ -11,37 +11,27 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.FlywheelSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import static edu.wpi.first.units.Units.RPM;
 
 public class RobotContainer {
-    private final FlywheelSubsystem m_flywheelSubsystem;
+  private final ShooterSubsystem m_flywheelSubsystem;
 
-    private final GenericHID m_controller =
-      new GenericHID(OperatorConstants.kOperatorControllerPort);
+  private final GenericHID m_controller = new GenericHID(OperatorConstants.kOperatorControllerPort);
 
   public RobotContainer() {
-    m_flywheelSubsystem = new FlywheelSubsystem();
+    m_flywheelSubsystem = new ShooterSubsystem();
     configureBindings();
     // Set the default command to force the shooter rest.
-    m_flywheelSubsystem.setDefaultCommand(m_flywheelSubsystem.set(0));
+    m_flywheelSubsystem.setDefaultCommand(new RunCommand(
+        () -> m_flywheelSubsystem.set(0), m_flywheelSubsystem));
   }
 
   private void configureBindings() {
-    //buttons for preset RPM setpoints
-    new JoystickButton(m_controller, 1).whileTrue(m_flywheelSubsystem.run(RPM.of(50)));
-    new JoystickButton(m_controller, 2).whileTrue(m_flywheelSubsystem.run(RPM.of(0)));
 
-    new JoystickButton(m_controller, 6).onTrue(m_flywheelSubsystem.setVelocity(RPM.of(100)));
-    new JoystickButton(m_controller, 8).onTrue( m_flywheelSubsystem.setVelocity(RPM.of(0)));
+    new JoystickButton(m_controller, 1).onTrue(m_flywheelSubsystem.run(RPM.of(250)));
+    new JoystickButton(m_controller, 2).onTrue(m_flywheelSubsystem.run(RPM.of(0)));
 
-    //button for customizable RPM setpoint from SmartDashboard
-    new JoystickButton(m_controller, 5).onTrue(m_flywheelSubsystem.setVelocity(RPM.of(SmartDashboard.getNumber("Flywheel Setpoint (RPM)", 0))));
-    new JoystickButton(m_controller, 10).onTrue(new RunCommand(()-> m_flywheelSubsystem.setVelocity(RPM.of(SmartDashboard.getNumber("Flywheel Setpoint (RPM)", 0)))));
-
-    //buttons for adjusting flywheel speed (upping and lowering but 0.3 or -0.3)
-    new JoystickButton(m_controller,3).onTrue(m_flywheelSubsystem.set(0.6));
-    new JoystickButton(m_controller, 4).onTrue(m_flywheelSubsystem.set(-0.6));
   }
 
   public Command getAutonomousCommand() {
