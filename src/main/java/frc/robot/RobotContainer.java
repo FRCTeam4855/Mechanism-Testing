@@ -4,28 +4,36 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.TestMotorSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import static edu.wpi.first.units.Units.RPM;
 
 public class RobotContainer {
-    private final TestMotorSubsystem m_testMotorSubsystem;
+  private final ShooterSubsystem m_flywheelSubsystem;
 
-    private final GenericHID m_controller =
-      new GenericHID(OperatorConstants.kOperatorControllerPort);
+  private final CommandXboxController m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
   public RobotContainer() {
-    m_testMotorSubsystem = new TestMotorSubsystem();
+    m_flywheelSubsystem = new ShooterSubsystem();
     configureBindings();
+    // Set the default command to force the shooter rest.
+    m_flywheelSubsystem.setDefaultCommand(new RunCommand(
+        () -> m_flywheelSubsystem.set(0), m_flywheelSubsystem));
   }
 
   private void configureBindings() {
-    new JoystickButton(m_controller, 1).onTrue(new RunCommand(() -> m_testMotorSubsystem.testMotorMove()));
-    new JoystickButton(m_controller, 2).onTrue(new RunCommand(() -> m_testMotorSubsystem.testMotorStop()));
+
+    m_controller.a().whileTrue(m_flywheelSubsystem.run(RPM.of(1000)));
+    m_controller.b().whileTrue(m_flywheelSubsystem.run(RPM.of(0)));
+    m_controller.x().whileTrue(m_flywheelSubsystem.set(0.2));
+    m_controller.y().whileTrue(m_flywheelSubsystem.set(-0.2));
+    m_controller.rightBumper().whileTrue(m_flywheelSubsystem.set(0));
+
   }
 
   public Command getAutonomousCommand() {
